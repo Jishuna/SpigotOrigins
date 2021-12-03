@@ -1,0 +1,13 @@
+name: 'Shulk'
+display-name: '&6&lShulk'
+impact: 3
+
+display-item: SHULKER_SHELL
+
+description:
+  - 'Test'
+  - 'Test'
+
+abilities:
+  - natural_armor(4)
+  - shell_shield()

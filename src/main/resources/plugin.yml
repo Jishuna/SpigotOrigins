@@ -1,0 +1,5 @@
+name: SpigotOrigins
+version: @version@
+main: me.jishuna.spigotorigins.SpigotOrigins
+authors: [Jishuna]
+api-version: 1.17

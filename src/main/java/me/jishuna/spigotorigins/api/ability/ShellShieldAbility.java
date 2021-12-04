@@ -1,12 +1,14 @@
 package me.jishuna.spigotorigins.api.ability;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
+import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -16,13 +18,25 @@ import me.jishuna.spigotorigins.api.RegisterAbility;;
 
 @RegisterAbility(name = "shell_shield")
 public class ShellShieldAbility extends Ability {
-	private final Set<UUID> shielding = new HashSet<>();
+	private final Map<UUID, Float> shielding = new HashMap<>();
 
 	public ShellShieldAbility(String[] data) {
 		addEventHandler(PlayerSwapHandItemsEvent.class, this::onAbilityToggle);
 		addEventHandler(PlayerDeathEvent.class, this::onPlayerDeath);
+		addEventHandler(PlayerMoveEvent.class, this::onMove);
 	}
-	
+
+	private void onMove(PlayerMoveEvent event, OriginPlayer originPlayer) {
+		if (!shielding.containsKey(event.getPlayer().getUniqueId()))
+			return;
+
+		Location to = event.getTo();
+		Location from = event.getFrom();
+
+		if (from.getX() != to.getX() || from.getY() < to.getY() || from.getZ() != to.getZ())
+			event.setCancelled(true);
+	}
+
 	private void onPlayerDeath(PlayerDeathEvent event, OriginPlayer originPlayer) {
 		this.shielding.remove(event.getEntity().getUniqueId());
 	}
@@ -35,7 +49,7 @@ public class ShellShieldAbility extends Ability {
 
 		event.setCancelled(true);
 
-		if (shielding.contains(player.getUniqueId())) {
+		if (shielding.containsKey(player.getUniqueId())) {
 			disableShield(player);
 		} else {
 			enableShield(player);
@@ -43,28 +57,24 @@ public class ShellShieldAbility extends Ability {
 	}
 
 	private void enableShield(Player player) {
-		this.shielding.add(player.getUniqueId());
+		this.shielding.put(player.getUniqueId(), player.getWalkSpeed());
+		player.setWalkSpeed(0f);
 
-		player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, Integer.MAX_VALUE, 50));
-		player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, 128));
-		player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Integer.MAX_VALUE, 3));
+		player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, 128, true, false));
+		player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Integer.MAX_VALUE, 3, true));
 
 		player.playSound(player.getLocation(), Sound.ENTITY_SHULKER_CLOSE, 1f, 1f);
 	}
 
 	private void disableShield(Player player) {
-		this.shielding.remove(player.getUniqueId());
+		Float speed = this.shielding.remove(player.getUniqueId());
+		if (speed == null)
+			return;
 
-		player.removePotionEffect(PotionEffectType.SLOW);
+		player.setWalkSpeed(speed);
 		player.removePotionEffect(PotionEffectType.JUMP);
 		player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
 
 		player.playSound(player.getLocation(), Sound.ENTITY_SHULKER_OPEN, 1f, 1f);
 	}
-
-	@Override
-	public String getKey() {
-		return "shell_shield";
-	}
-
 }

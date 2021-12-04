@@ -5,9 +5,15 @@ impact: 3
 display-item: SHULKER_SHELL
 
 description:
-  - 'Test'
-  - 'Test'
+  - '&f&nShell Shield'
+  - '&7Press Shift-F to enter or exit your shell.'
+  - '&7While inside your shell you gain 80% damage'
+  - '&7reduction but are unable to move.'
+  - ''
+  - '&f&nNatural Armor'
+  - '&7You naturally gain some damage resistance'
+  - '&7even when not wearing armor.'
 
 abilities:
-  - natural_armor(4)
+  - attribute(generic_armor,4)
   - shell_shield()

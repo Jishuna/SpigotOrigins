@@ -58,17 +58,7 @@ public class Origin {
 	}
 
 	public ItemStack getDisplayItem() {
-		ItemBuilder builder = new ItemBuilder(this.material).withName(this.displayName).addLore("")
-				.addLore(this.description);
-
-		this.abilities.forEach(ability -> {
-			builder.addLore("");
-			builder.addLore(this.plugin.getMessageConfig().getString("abilities." + ability.getKey() + ".name"));
-			builder.addLore(
-					this.plugin.getMessageConfig().getStringList("abilities." + ability.getKey() + ".description"));
-		});
-
-		return builder.build();
+		return new ItemBuilder(this.material).withName(this.displayName).addLore("").addLore(this.description).build();
 	}
 
 	public void setupAbilities(OriginPlayer player) {
@@ -77,7 +67,7 @@ public class Origin {
 				setup.onSetup(player);
 		});
 	}
-	
+
 	public void cleanupAbilities(OriginPlayer player) {
 		this.abilities.forEach(ability -> {
 			if (ability instanceof SetupAbility setup)

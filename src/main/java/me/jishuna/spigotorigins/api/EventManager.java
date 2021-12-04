@@ -11,6 +11,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 
 import me.jishuna.commonlib.events.EventConsumer;
@@ -68,5 +69,6 @@ public class EventManager {
 	private void registerBaseEvents() {
 		registerListener(PlayerSwapHandItemsEvent.class, event -> processEvent(event, PlayerSwapHandItemsEvent.class));
 		registerListener(PlayerDeathEvent.class, event -> processEvent(event, PlayerDeathEvent.class));
+		registerListener(PlayerMoveEvent.class, event -> processEvent(event, PlayerMoveEvent.class));
 	}
 }

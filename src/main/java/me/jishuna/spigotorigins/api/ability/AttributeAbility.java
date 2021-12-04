@@ -13,45 +13,43 @@ import me.jishuna.spigotorigins.api.InvalidOriginException;
 import me.jishuna.spigotorigins.api.OriginPlayer;
 import me.jishuna.spigotorigins.api.RegisterAbility;;
 
-@RegisterAbility(name = "natural_armor")
-public class NaturalArmorAbility extends Ability implements SetupAbility {
-	private static final String ATTRIBUTE_NAME = "spigotorigins:natural_armor";
+@RegisterAbility(name = "attribute")
+public class AttributeAbility extends Ability implements SetupAbility {
 
+	private final String name;
+	private final Attribute attribute;
 	private final AttributeModifier modifier;
 
-	public NaturalArmorAbility(String[] data) throws InvalidOriginException {
+	public AttributeAbility(String[] data) throws InvalidOriginException {
 		checkLength(data, 1);
 
-		int amount = readInt(data[0], "amount");
-		this.modifier = new AttributeModifier(ATTRIBUTE_NAME, amount, Operation.ADD_NUMBER);
+		this.attribute = Attribute.valueOf(data[0].toUpperCase());
+		this.name = "so:" + data[0];
+		
+		int amount = readInt(data[1], "amount");
+		this.modifier = new AttributeModifier(this.name, amount, Operation.ADD_NUMBER);
 	}
 
 	@Override
 	public void onSetup(OriginPlayer originPlayer) {
 		Player player = originPlayer.getPlayer();
-		AttributeInstance armor = player.getAttribute(Attribute.GENERIC_ARMOR);
+		AttributeInstance instance = player.getAttribute(this.attribute);
 
-		cleanupAttributes(player, armor);
-		armor.addModifier(this.modifier);
+		cleanupAttributes(player, instance);
+		instance.addModifier(this.modifier);
 	}
 
 	@Override
 	public void onCleanup(OriginPlayer originPlayer) {
 		Player player = originPlayer.getPlayer();
 
-		cleanupAttributes(player, player.getAttribute(Attribute.GENERIC_ARMOR));
+		cleanupAttributes(player, player.getAttribute(this.attribute));
 	}
 
 	private void cleanupAttributes(Player player, AttributeInstance instance) {
 		for (AttributeModifier modifier : instance.getModifiers()) {
-			if (modifier.getName().equals(ATTRIBUTE_NAME))
+			if (modifier.getName().equals(this.name))
 				instance.removeModifier(modifier);
 		}
 	}
-
-	@Override
-	public String getKey() {
-		return "natural_armor";
-	}
-
 }

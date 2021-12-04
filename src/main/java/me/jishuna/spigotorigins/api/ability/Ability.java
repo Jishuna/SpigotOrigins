@@ -23,6 +23,4 @@ public abstract class Ability {
 	public <T extends Event> Collection<EventWrapper<? extends Event>> getEventHandlers(Class<T> type) {
 		return this.handlerMap.get(type);
 	}
-	
-	public abstract String getKey();
 }

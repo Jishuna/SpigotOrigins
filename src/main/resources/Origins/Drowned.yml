@@ -20,8 +20,12 @@ description:
   - '&f&nLost Together'
   - '&7Drowned will not attack you unless you'
   - '&7attack them.'
+  - ''
+  - '&f&nUndead Hunger'
+  - '&7You are immune to the hunger effect.'
 
 abilities:
   - aquatic()
   - swift_swim()
   - neutral(drowned)
+  - effect_immune(hunger)

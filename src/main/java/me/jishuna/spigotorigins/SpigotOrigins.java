@@ -42,6 +42,8 @@ public class SpigotOrigins extends JavaPlugin {
 		PluginManager pm = Bukkit.getPluginManager();
 		pm.registerEvents(this.playerManager, this);
 		pm.registerEvents(this.inventoryManager, this);
+		
+		new TickingAbilityRunnable(this.playerManager).runTaskTimer(this, 0, 10);
 
 		loadOrigins();
 	}

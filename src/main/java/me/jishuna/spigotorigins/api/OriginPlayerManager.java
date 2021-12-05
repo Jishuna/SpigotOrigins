@@ -1,5 +1,6 @@
 package me.jishuna.spigotorigins.api;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -27,6 +28,10 @@ public class OriginPlayerManager implements Listener {
 
 	public OriginPlayer getOriginPlayer(UUID id) {
 		return this.playerMap.get(id);
+	}
+	
+	public Collection<OriginPlayer> getPlayers() {
+		return this.playerMap.values();
 	}
 
 	@EventHandler

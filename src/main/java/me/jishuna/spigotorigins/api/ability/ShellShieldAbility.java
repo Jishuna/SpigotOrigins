@@ -72,7 +72,7 @@ public class ShellShieldAbility extends Ability implements SetupAbility {
 		player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, 128, true, false));
 		player.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Integer.MAX_VALUE, 3, true));
 
-		player.playSound(player.getLocation(), Sound.ENTITY_SHULKER_CLOSE, 1f, 1f);
+		player.playSound(player.getLocation(), Sound.ENTITY_SHULKER_CLOSE, 0.5f, 0f);
 	}
 
 	private void disableShield(Player player) {
@@ -84,6 +84,6 @@ public class ShellShieldAbility extends Ability implements SetupAbility {
 		player.removePotionEffect(PotionEffectType.JUMP);
 		player.removePotionEffect(PotionEffectType.DAMAGE_RESISTANCE);
 
-		player.playSound(player.getLocation(), Sound.ENTITY_SHULKER_OPEN, 1f, 1f);
+		player.playSound(player.getLocation(), Sound.ENTITY_SHULKER_OPEN, 0.5f, 0f);
 	}
 }

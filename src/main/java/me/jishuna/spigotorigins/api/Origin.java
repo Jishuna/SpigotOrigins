@@ -101,6 +101,10 @@ public class Origin {
 		return impact;
 	}
 
+	public Set<Ability> getAbilities() {
+		return abilities;
+	}
+
 	private ChatColor getImpactColor() {
 		return switch (this.impact) {
 		case 1 -> ChatColor.GREEN;

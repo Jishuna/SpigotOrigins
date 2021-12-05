@@ -1,0 +1,24 @@
+name: 'enderian'
+display-name: '&6&lEnderian'
+impact: 3
+
+display-item: ENDER_PEARL
+
+description:
+  - '&7Born in the end, you have adapted to'
+  - '&7the spread out terrain by adopting the'
+  - '&7ability to teleport.'
+  - ''
+  - '&f&nTeleportation'
+  - '&7Press Shift-F to throw an ender pearl.'
+  - ''
+  - '&f&nEnderborn'
+  - '&7You take no damage from ender pearls.'
+  - ''
+  - '&f&nHydrophobic'
+  - '&7You take damage when in contact with water.'
+
+abilities:
+  - hydrophobic()
+  - ender_pearl()
+  - no_pearl_damage()

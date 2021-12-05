@@ -10,13 +10,16 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityAirChangeEvent;
 import org.bukkit.event.entity.EntityEvent;
+import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 import me.jishuna.commonlib.events.EventConsumer;
 import me.jishuna.spigotorigins.SpigotOrigins;
@@ -77,6 +80,9 @@ public class EventManager {
 		registerListener(PlayerInteractEvent.class, event -> processEvent(event, PlayerInteractEvent.class));
 		registerListener(EntityAirChangeEvent.class, event -> processEvent(event, EntityAirChangeEvent.class));
 		registerListener(PlayerRespawnEvent.class, event -> processEvent(event, PlayerRespawnEvent.class));
+		registerListener(EntityPotionEffectEvent.class, event -> processEvent(event, EntityPotionEffectEvent.class));
+		registerListener(PlayerTeleportEvent.class, event -> processEvent(event, PlayerTeleportEvent.class));
+		registerListener(PlayerInteractEntityEvent.class, event -> processEvent(event, PlayerInteractEntityEvent.class));
 
 		registerListener(EntityTargetLivingEntityEvent.class, event -> {
 			if (event.getTarget() == null || event.getTarget().getType() != EntityType.PLAYER)

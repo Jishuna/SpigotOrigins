@@ -1,10 +1,14 @@
-name: 'Shulk'
+name: 'shulk'
 display-name: '&6&lShulk'
 impact: 3
 
 display-item: SHULKER_SHELL
 
 description:
+  - '&7Shulks have no legs and a protective shell,'
+  - '&7owing to their relation to the mysterious'
+  - '&7shulkers of the end.'
+  - ''
   - '&f&nShell Shield'
   - '&7Press Shift-F to enter or exit your shell.'
   - '&7While inside your shell you gain 80% damage'
@@ -13,7 +17,22 @@ description:
   - '&f&nNatural Armor'
   - '&7You naturally gain some damage resistance'
   - '&7even when not wearing armor.'
+  - ''
+  - '&f&nShulker Family'
+  - '&7Shulkers will not attack you unless you'
+  - '&7attack them.'
+  - ''
+  - '&f&nUnwieldy'
+  - '&7The way your arms are formed makes it impossible'
+  - '&7to hold a shield upright.'
+  - ''
+  - '&f&nLegless'
+  - '&7You have no legs, which means you move slower'
+  - '&7than most.'
 
 abilities:
-  - attribute(generic_armor,4)
   - shell_shield()
+  - attribute(generic_armor,4)
+  - neutral(shulker)
+  - disable_shield()
+  - attribute_percent(generic_movement_speed,-0.1)

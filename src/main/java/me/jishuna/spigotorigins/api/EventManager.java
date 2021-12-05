@@ -8,10 +8,14 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.entity.EntityAirChangeEvent;
 import org.bukkit.event.entity.EntityEvent;
+import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 
 import me.jishuna.commonlib.events.EventConsumer;
@@ -51,24 +55,34 @@ public class EventManager {
 		if (event.getEntityType() != EntityType.PLAYER)
 			return;
 
-		OriginPlayer player = plugin.getPlayerRegistry().getOriginPlayer((Player) event.getEntity());
-		if (player == null)
-			return;
-
-		player.getOrigin().ifPresent(origin -> origin.handleAbilities(eventClass, event, player));
+		handlePlayer((Player) event.getEntity(), event, eventClass);
 	}
 
 	public <T extends PlayerEvent> void processEvent(T event, Class<T> eventClass) {
-		OriginPlayer player = plugin.getPlayerRegistry().getOriginPlayer(event.getPlayer());
-		if (player == null)
+		handlePlayer(event.getPlayer(), event, eventClass);
+	}
+
+	private <T extends Event> void handlePlayer(Player player, T event, Class<T> eventClass) {
+		OriginPlayer originPlayer = plugin.getPlayerRegistry().getOriginPlayer(player);
+		if (originPlayer == null)
 			return;
 
-		player.getOrigin().ifPresent(origin -> origin.handleAbilities(eventClass, event, player));
+		originPlayer.getOrigin().ifPresent(origin -> origin.handleAbilities(eventClass, event, originPlayer));
 	}
 
 	private void registerBaseEvents() {
 		registerListener(PlayerSwapHandItemsEvent.class, event -> processEvent(event, PlayerSwapHandItemsEvent.class));
 		registerListener(PlayerDeathEvent.class, event -> processEvent(event, PlayerDeathEvent.class));
 		registerListener(PlayerMoveEvent.class, event -> processEvent(event, PlayerMoveEvent.class));
+		registerListener(PlayerInteractEvent.class, event -> processEvent(event, PlayerInteractEvent.class));
+		registerListener(EntityAirChangeEvent.class, event -> processEvent(event, EntityAirChangeEvent.class));
+		registerListener(PlayerRespawnEvent.class, event -> processEvent(event, PlayerRespawnEvent.class));
+
+		registerListener(EntityTargetLivingEntityEvent.class, event -> {
+			if (event.getTarget() == null || event.getTarget().getType() != EntityType.PLAYER)
+				return;
+
+			handlePlayer((Player) event.getTarget(), event, EntityTargetLivingEntityEvent.class);
+		});
 	}
 }

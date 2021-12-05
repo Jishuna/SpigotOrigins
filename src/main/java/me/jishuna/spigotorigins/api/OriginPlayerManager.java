@@ -41,7 +41,14 @@ public class OriginPlayerManager implements Listener {
 
 	@EventHandler
 	public void onLeave(PlayerQuitEvent event) {
-		this.playerMap.remove(event.getPlayer().getUniqueId());
+		Player player = event.getPlayer();
+		OriginPlayer originPlayer = getOriginPlayer(player);
+
+		if (originPlayer != null) {
+			originPlayer.getOrigin().ifPresent(origin -> origin.cleanupAbilities(originPlayer));
+		}
+
+		this.playerMap.remove(player.getUniqueId());
 	}
 
 	private void handleInitialJoin(Player player, OriginPlayer originPlayer) {

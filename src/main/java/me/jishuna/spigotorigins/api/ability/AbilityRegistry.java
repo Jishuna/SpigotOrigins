@@ -67,7 +67,6 @@ public class AbilityRegistry {
 			}
 			throw new InvalidOriginException("Unknown error: " + e.getMessage());
 		}
-		System.err.println(ability);
 		return ability;
 	}
 

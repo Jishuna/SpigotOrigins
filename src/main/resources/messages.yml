@@ -3,15 +3,5 @@ command-usage: '&4&l[&c&l!&4&l] &cInvalid argument: &7%arg%. &cValid arguments a
 
 select-origin: '&0Select Origin'
 
-abilities:
-  natural_armor:
-    name: '&f&nNatural Armor'
-    description:
-      - '&7You naturally gain some damage resistance'
-      - '&7even when not wearing armor.'
-  shell_shield:
-    name: '&f&nShell Shield'
-    description:
-      - '&7Press Shift-F to enter or exit your shell.'
-      - '&7While inside your shell you gain 80% damage'
-      - '&7reduction but are unable to move.'
+impact: '&6&lGameplay Impact: '
+impact-icon: '✦'

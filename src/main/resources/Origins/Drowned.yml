@@ -1,0 +1,27 @@
+name: 'drowned'
+display-name: '&6&lDrowned'
+impact: 4
+
+display-item: TRIDENT
+
+description:
+  - '&7A tragic accident at sea has left you as'
+  - '&7a lifeless husk of your former self, but'
+  - '&7on the bright side you are now an'
+  - '&7excellent swimmer.'
+  - ''
+  - '&f&nAquatic'
+  - '&7You are adapted to breather underwater,'
+  - '&7but not on land.'
+  - ''
+  - '&f&nSwift Swim'
+  - '&7You move faster than normal underwater.'
+  - ''
+  - '&f&nLost Together'
+  - '&7Drowned will not attack you unless you'
+  - '&7attack them.'
+
+abilities:
+  - aquatic()
+  - swift_swim()
+  - neutral(drowned)

@@ -1,0 +1,10 @@
+name: 'human'
+display-name: '&6&lHuman'
+impact: 0
+
+display-item: PLAYER_HEAD
+
+description:
+  - ''
+
+abilities:

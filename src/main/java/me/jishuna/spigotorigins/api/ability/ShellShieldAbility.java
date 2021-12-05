@@ -17,7 +17,7 @@ import me.jishuna.spigotorigins.api.OriginPlayer;
 import me.jishuna.spigotorigins.api.RegisterAbility;;
 
 @RegisterAbility(name = "shell_shield")
-public class ShellShieldAbility extends Ability {
+public class ShellShieldAbility extends Ability implements SetupAbility {
 	private final Map<UUID, Float> shielding = new HashMap<>();
 
 	public ShellShieldAbility(String[] data) {
@@ -33,8 +33,8 @@ public class ShellShieldAbility extends Ability {
 		Location to = event.getTo();
 		Location from = event.getFrom();
 
-		if (from.getX() != to.getX() || from.getY() < to.getY() || from.getZ() != to.getZ())
-			event.setCancelled(true);
+		to.setX(from.getX());
+		to.setZ(from.getZ());
 	}
 
 	private void onPlayerDeath(PlayerDeathEvent event, OriginPlayer originPlayer) {
@@ -54,6 +54,15 @@ public class ShellShieldAbility extends Ability {
 		} else {
 			enableShield(player);
 		}
+	}
+
+	@Override
+	public void onSetup(OriginPlayer originPlayer) {
+	}
+
+	@Override
+	public void onCleanup(OriginPlayer originPlayer) {
+		this.shielding.remove(originPlayer.getPlayer().getUniqueId());
 	}
 
 	private void enableShield(Player player) {

@@ -13,21 +13,21 @@ import me.jishuna.spigotorigins.api.InvalidOriginException;
 import me.jishuna.spigotorigins.api.OriginPlayer;
 import me.jishuna.spigotorigins.api.RegisterAbility;;
 
-@RegisterAbility(name = "attribute")
-public class AttributeAbility extends Ability implements SetupAbility {
+@RegisterAbility(name = "attribute_percent")
+public class AttributePercentAbility extends Ability implements SetupAbility {
 
 	private final String name;
 	private final Attribute attribute;
 	private final AttributeModifier modifier;
 
-	public AttributeAbility(String[] data) throws InvalidOriginException {
+	public AttributePercentAbility(String[] data) throws InvalidOriginException {
 		checkLength(data, 1);
 
 		this.attribute = Attribute.valueOf(data[0].toUpperCase());
-		this.name = "so:" + data[0];
-
+		this.name = "sop:" + data[0];
+		
 		double amount = readDouble(data[1], "amount");
-		this.modifier = new AttributeModifier(this.name, amount, Operation.ADD_NUMBER);
+		this.modifier = new AttributeModifier(this.name, amount, Operation.ADD_SCALAR);
 	}
 
 	@Override

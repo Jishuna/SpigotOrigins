@@ -10,6 +10,7 @@ import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 
 import me.jishuna.commonlib.items.ItemBuilder;
+import me.jishuna.commonlib.language.MessageConfig;
 import me.jishuna.spigotorigins.SpigotOrigins;
 import me.jishuna.spigotorigins.api.ability.Ability;
 import me.jishuna.spigotorigins.api.ability.SetupAbility;
@@ -58,7 +59,16 @@ public class Origin {
 	}
 
 	public ItemStack getDisplayItem() {
-		return new ItemBuilder(this.material).withName(this.displayName).addLore("").addLore(this.description).build();
+		MessageConfig config = this.plugin.getMessageConfig();
+		String icon = config.getString("impact-icon");
+
+		return new ItemBuilder(this.material)
+				.withName(this.displayName)
+				.addLore(config.getString("impact") + getImpactColor()
+						+ icon.repeat(this.impact) + ChatColor.GRAY + icon.repeat(5 - this.impact))
+				.addLore("")
+				.addLore(this.description)
+				.build();
 	}
 
 	public void setupAbilities(OriginPlayer player) {
@@ -91,4 +101,14 @@ public class Origin {
 		return impact;
 	}
 
+	private ChatColor getImpactColor() {
+		return switch (this.impact) {
+		case 1 -> ChatColor.GREEN;
+		case 2 -> ChatColor.of("#aaff55");
+		case 3 -> ChatColor.YELLOW;
+		case 4 -> ChatColor.of("#ffaa55");
+		case 5 -> ChatColor.RED;
+		default -> ChatColor.GREEN;
+		};
+	}
 }

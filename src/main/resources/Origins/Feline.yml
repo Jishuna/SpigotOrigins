@@ -1,0 +1,32 @@
+name: 'feline'
+display-name: '&6&lFeline'
+impact: 2
+
+display-item: COD
+
+description:
+  - '&7A tragic accident at sea has left you as'
+  - '&7a lifeless husk of your former self, but'
+  - '&7on the bright side you are now an'
+  - '&7excellent swimmer.'
+  - ''
+  - '&f&nCat-like Reflexes'
+  - '&7You can move faster than most.'
+  - ''
+  - '&f&nGracefull Landing'
+  - '&7You always land on your feet, taking no'
+  - '&7fall damage.'
+  - ''
+  - '&f&nFeline Fear'
+  - '&7Creepers are scared of you, and will not'
+  - '&7attack you unless you attack them.'
+  - ''
+  - '&f&nNine Lives'
+  - '&7You have 1 less heart of health than.'
+  - '&7most.'
+
+abilities:
+  - attribute_percent(generic_movement_speed,0.2)
+  - damage_immune(fall)
+  - neutral(creeper)
+  - max_health(18)

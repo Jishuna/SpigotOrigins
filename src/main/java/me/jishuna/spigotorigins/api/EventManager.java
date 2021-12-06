@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityAirChangeEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
@@ -82,6 +83,7 @@ public class EventManager {
 		registerListener(PlayerRespawnEvent.class, event -> processEvent(event, PlayerRespawnEvent.class));
 		registerListener(EntityPotionEffectEvent.class, event -> processEvent(event, EntityPotionEffectEvent.class));
 		registerListener(PlayerTeleportEvent.class, event -> processEvent(event, PlayerTeleportEvent.class));
+		registerListener(EntityDamageEvent.class, event -> processEvent(event, EntityDamageEvent.class));
 		registerListener(PlayerInteractEntityEvent.class, event -> processEvent(event, PlayerInteractEntityEvent.class));
 
 		registerListener(EntityTargetLivingEntityEvent.class, event -> {

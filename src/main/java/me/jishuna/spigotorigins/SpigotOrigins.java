@@ -16,6 +16,7 @@ import me.jishuna.spigotorigins.api.Origin;
 import me.jishuna.spigotorigins.api.OriginPlayerManager;
 import me.jishuna.spigotorigins.api.OriginRegistry;
 import me.jishuna.spigotorigins.api.ability.AbilityRegistry;
+import me.jishuna.spigotorigins.nms.NMSManager;
 
 public class SpigotOrigins extends JavaPlugin {
 	private static final String PATH = "Origins";
@@ -38,6 +39,8 @@ public class SpigotOrigins extends JavaPlugin {
 		this.playerManager = new OriginPlayerManager(this);
 
 		this.inventoryManager = new CustomInventoryManager();
+		
+		NMSManager.initAdapater(this);
 
 		PluginManager pm = Bukkit.getPluginManager();
 		pm.registerEvents(this.playerManager, this);

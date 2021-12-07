@@ -1,7 +1,6 @@
 package me.jishuna.spigotorigins.api.ability;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityAirChangeEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -11,8 +10,7 @@ import org.bukkit.potion.PotionEffectType;
 import me.jishuna.spigotorigins.api.InvalidOriginException;
 import me.jishuna.spigotorigins.api.OriginPlayer;
 import me.jishuna.spigotorigins.api.RegisterAbility;
-import net.minecraft.server.level.EntityPlayer;
-import net.minecraft.world.damagesource.DamageSource;;
+import me.jishuna.spigotorigins.nms.NMSManager;;
 
 @RegisterAbility(name = "aquatic")
 public class AquaticAbility extends Ability implements SetupAbility {
@@ -44,11 +42,9 @@ public class AquaticAbility extends Ability implements SetupAbility {
 			player.removePotionEffect(PotionEffectType.WATER_BREATHING);
 		}
 
-		EntityPlayer entityPlayer = ((CraftPlayer) player).getHandle();
-
 		if (air == -20) {
 			air = 0;
-			entityPlayer.damageEntity(DamageSource.h, 2f);
+			NMSManager.getAdapter().dealDrowningDamage(player);
 		}
 
 		event.setAmount(air);

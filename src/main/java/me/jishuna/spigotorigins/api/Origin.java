@@ -9,10 +9,11 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 
+import me.jishuna.actionconfiglib.Action;
+import me.jishuna.actionconfiglib.ActionContext;
 import me.jishuna.commonlib.items.ItemBuilder;
 import me.jishuna.commonlib.language.MessageConfig;
 import me.jishuna.spigotorigins.SpigotOrigins;
-import me.jishuna.spigotorigins.api.ability.Ability;
 import me.jishuna.spigotorigins.api.ability.SetupAbility;
 import net.md_5.bungee.api.ChatColor;
 
@@ -27,7 +28,7 @@ public class Origin {
 
 	private Material material;
 
-	private final Set<Ability> abilities = new HashSet<>();
+	private final Set<Action> abilities = new HashSet<>();
 
 	public Origin(SpigotOrigins plugin, ConfigurationSection section) throws InvalidOriginException {
 		this.plugin = plugin;
@@ -41,9 +42,9 @@ public class Origin {
 		this.impact = section.getInt("impact", 1);
 
 		for (String abilityString : section.getStringList("abilities")) {
-			Ability ability = plugin.getAbilityRegistry().parseString(abilityString);
-
-			this.abilities.add(ability);
+			Action ability = plugin.getAbilityRegistry().getAbility(abilityString);
+			if (ability != null)
+				this.abilities.add(ability);
 		}
 
 		String materialName = section.getString("display-item", "none");
@@ -53,9 +54,8 @@ public class Origin {
 			throw new InvalidOriginException("Invalid display-item: " + materialName);
 	}
 
-	public <T extends Event> void handleAbilities(Class<T> type, T event, OriginPlayer player) {
-		this.abilities
-				.forEach(ability -> ability.getEventHandlers(type).forEach(wrapper -> wrapper.consume(event, player)));
+	public <T extends Event> void handleAbilities(ActionContext context) {
+		this.abilities.forEach(action -> action.handleAction(context));
 	}
 
 	public ItemStack getDisplayItem() {
@@ -63,12 +63,9 @@ public class Origin {
 		String icon = config.getString("impact-icon");
 
 		return new ItemBuilder(this.material)
-				.withName(this.displayName)
-				.addLore(config.getString("impact") + getImpactColor()
+				.withName(this.displayName).addLore(config.getString("impact") + getImpactColor()
 						+ icon.repeat(this.impact) + ChatColor.GRAY + icon.repeat(5 - this.impact))
-				.addLore("")
-				.addLore(this.description)
-				.build();
+				.addLore("").addLore(this.description).build();
 	}
 
 	public void setupAbilities(OriginPlayer player) {
@@ -101,7 +98,7 @@ public class Origin {
 		return impact;
 	}
 
-	public Set<Ability> getAbilities() {
+	public Set<Action> getAbilities() {
 		return abilities;
 	}
 

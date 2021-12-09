@@ -25,7 +25,5 @@ description:
   - '&7You are immune to the hunger effect.'
 
 abilities:
-  - aquatic()
-  - swift_swim()
-  - neutral(drowned)
-  - effect_immune(hunger)
+  - swift_swim
+  - aquatic_eye

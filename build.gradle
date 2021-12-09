@@ -39,8 +39,10 @@ dependencies {
 	implementation fileTree("temp")
 	
     compileOnly group: 'org.spigotmc', name: 'spigot', version: '1.17-R0.1-SNAPSHOT'
+    
     implementation group: 'me.jishuna.jishunacommonlib', name: 'JishunaCommonLib', version: '1.0.0'
     implementation group: 'org.bstats', name: 'bstats-bukkit', version: '2.2.1'
+    implementation group: 'me.jishuna.actionconfiglib', name: 'ActionConfigLib', version: '1.0.0'
 }
 
 jar {
@@ -53,7 +55,9 @@ jar {
 
 shadowJar {
 	dependsOn(jar)
-  	minimize()
+   	minimize {
+   		exclude(dependency('me.jishuna.actionconfiglib:.*:.*'))
+  	}
   	
   	delete fileTree('./target/') {
         exclude archiveName
@@ -61,6 +65,7 @@ shadowJar {
     
     setArchiveName('SpigotOrigins-' + this.version + '.jar')                                              
     relocate 'me.jishuna.commonlib', 'me.jishuna.spigotorigins.libs.jishunacommonlib' 
+    relocate 'me.jishuna.actionconfiglib', 'me.jishuna.spigotorigins.libs.actionconfiglib' 
     relocate 'org.bstats', 'me.jishuna.spigotorigins.libs.bstats'
     destinationDirectory = file("./target/")                                                          
 }

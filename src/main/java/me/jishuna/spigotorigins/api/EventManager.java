@@ -1,96 +1,67 @@
 package me.jishuna.spigotorigins.api;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Consumer;
 
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.entity.EntityAirChangeEvent;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityEvent;
-import org.bukkit.event.entity.EntityPotionEffectEvent;
-import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 
+import me.jishuna.actionconfiglib.ActionContext;
+import me.jishuna.actionconfiglib.triggers.TriggerRegistry;
 import me.jishuna.commonlib.events.EventConsumer;
 import me.jishuna.spigotorigins.SpigotOrigins;
 
 public class EventManager {
 	private final SpigotOrigins plugin;
 
-	private Map<Class<? extends Event>, EventConsumer<? extends Event>> listenerMap = new HashMap<>();
-
 	public EventManager(SpigotOrigins plugin) {
 		this.plugin = plugin;
-		registerBaseEvents();
+		registerListeners();
 	}
 
-	public <T extends Event> boolean registerListener(Class<T> eventClass, Consumer<T> handler) {
-		return registerListener(eventClass, handler, EventPriority.NORMAL);
+	public void registerListeners() {
+		registerListener(BlockBreakEvent.class, this::onBlockBreak);
+		registerListener(EntityDamageEvent.class, this::onDamage);
 	}
 
-	public <T extends Event> boolean registerListener(Class<T> eventClass, Consumer<T> handler,
-			EventPriority priority) {
-		if (isListenerRegistered(eventClass))
-			return false;
-
-		EventConsumer<? extends Event> consumer = new EventConsumer<>(eventClass, handler);
-		consumer.register(this.plugin, priority);
-
-		this.listenerMap.put(eventClass, consumer);
-		return true;
-	}
-
-	public boolean isListenerRegistered(Class<? extends Event> eventClass) {
-		return this.listenerMap.containsKey(eventClass);
-	}
-
-	public <T extends EntityEvent> void processEvent(T event, Class<T> eventClass) {
-		if (event.getEntityType() != EntityType.PLAYER)
+	private void onDamage(EntityDamageEvent event) {
+		if (event.getCause() == DamageCause.ENTITY_ATTACK || event.getCause() == DamageCause.ENTITY_SWEEP_ATTACK
+				|| event.getCause() == DamageCause.PROJECTILE)
 			return;
 
-		handlePlayer((Player) event.getEntity(), event, eventClass);
-	}
+		if (!(event.getEntity()instanceof Player player))
+			return;
 
-	public <T extends PlayerEvent> void processEvent(T event, Class<T> eventClass) {
-		handlePlayer(event.getPlayer(), event, eventClass);
-	}
-
-	private <T extends Event> void handlePlayer(Player player, T event, Class<T> eventClass) {
 		OriginPlayer originPlayer = plugin.getPlayerRegistry().getOriginPlayer(player);
 		if (originPlayer == null)
 			return;
 
-		originPlayer.getOrigin().ifPresent(origin -> origin.handleAbilities(eventClass, event, originPlayer));
+		ActionContext context = new ActionContext.Builder(TriggerRegistry.DAMAGED_BY_OTHER).event(event).user(player)
+				.build();
+		originPlayer.handleContext(context);
 	}
 
-	private void registerBaseEvents() {
-		registerListener(PlayerSwapHandItemsEvent.class, event -> processEvent(event, PlayerSwapHandItemsEvent.class));
-		registerListener(PlayerDeathEvent.class, event -> processEvent(event, PlayerDeathEvent.class));
-		registerListener(PlayerMoveEvent.class, event -> processEvent(event, PlayerMoveEvent.class));
-		registerListener(PlayerInteractEvent.class, event -> processEvent(event, PlayerInteractEvent.class));
-		registerListener(EntityAirChangeEvent.class, event -> processEvent(event, EntityAirChangeEvent.class));
-		registerListener(PlayerRespawnEvent.class, event -> processEvent(event, PlayerRespawnEvent.class));
-		registerListener(EntityPotionEffectEvent.class, event -> processEvent(event, EntityPotionEffectEvent.class));
-		registerListener(PlayerTeleportEvent.class, event -> processEvent(event, PlayerTeleportEvent.class));
-		registerListener(EntityDamageEvent.class, event -> processEvent(event, EntityDamageEvent.class));
-		registerListener(PlayerInteractEntityEvent.class, event -> processEvent(event, PlayerInteractEntityEvent.class));
+	private void onBlockBreak(BlockBreakEvent event) {
+		Player player = event.getPlayer();
+		OriginPlayer originPlayer = plugin.getPlayerRegistry().getOriginPlayer(player);
+		if (originPlayer == null)
+			return;
 
-		registerListener(EntityTargetLivingEntityEvent.class, event -> {
-			if (event.getTarget() == null || event.getTarget().getType() != EntityType.PLAYER)
-				return;
+		ActionContext context = new ActionContext.Builder(TriggerRegistry.BREAK_BLOCK).event(event).user(player)
+				.targetLocation(event.getBlock().getLocation()).build();
+		originPlayer.handleContext(context);
+	}
 
-			handlePlayer((Player) event.getTarget(), event, EntityTargetLivingEntityEvent.class);
-		});
+	public <T extends Event> void registerListener(Class<T> eventClass, Consumer<T> handler) {
+		registerListener(eventClass, handler, EventPriority.NORMAL);
+	}
+
+	public <T extends Event> void registerListener(Class<T> eventClass, Consumer<T> handler, EventPriority priority) {
+
+		EventConsumer<? extends Event> consumer = new EventConsumer<>(eventClass, handler);
+		consumer.register(this.plugin, priority);
 	}
 }

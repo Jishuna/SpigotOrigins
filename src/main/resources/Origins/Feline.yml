@@ -26,7 +26,4 @@ description:
   - '&7most.'
 
 abilities:
-  - attribute_percent(generic_movement_speed,0.2)
-  - damage_immune(fall)
-  - neutral(creeper)
-  - max_health(18)
+  - gracefull_landing

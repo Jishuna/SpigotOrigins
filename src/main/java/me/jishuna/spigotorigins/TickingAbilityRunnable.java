@@ -2,8 +2,9 @@ package me.jishuna.spigotorigins;
 
 import org.bukkit.scheduler.BukkitRunnable;
 
+import me.jishuna.actionconfiglib.ActionContext;
+import me.jishuna.actionconfiglib.triggers.TriggerRegistry;
 import me.jishuna.spigotorigins.api.OriginPlayerManager;
-import me.jishuna.spigotorigins.api.ability.TickingAbility;
 
 public class TickingAbilityRunnable extends BukkitRunnable {
 
@@ -16,13 +17,8 @@ public class TickingAbilityRunnable extends BukkitRunnable {
 	@Override
 	public void run() {
 		manager.getPlayers().forEach(player -> {
-			player.getOrigin().ifPresent(origin -> {
-				origin.getAbilities().forEach(ability -> {
-					if (ability instanceof TickingAbility ticking) {
-						ticking.tick(player);
-					}
-				});
-			});
+			ActionContext context = new ActionContext.Builder(TriggerRegistry.TICK).user(player.getPlayer()).build();
+			player.handleContext(context);
 		});
 	}
 

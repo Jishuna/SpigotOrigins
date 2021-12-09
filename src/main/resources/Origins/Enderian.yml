@@ -19,6 +19,4 @@ description:
   - '&7You take damage when in contact with water.'
 
 abilities:
-  - hydrophobic()
-  - ender_pearl()
-  - no_pearl_damage()
+  - hydrophobic

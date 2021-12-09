@@ -5,6 +5,8 @@ import java.util.Optional;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 
+import me.jishuna.actionconfiglib.ActionContext;
+
 public class OriginPlayer {
 
 	private final Player player;
@@ -16,6 +18,10 @@ public class OriginPlayer {
 				PersistentDataType.STRING, ""));
 
 		this.getOrigin().ifPresent(origin -> origin.setupAbilities(this));
+	}
+
+	public void handleContext(ActionContext context) {
+		this.getOrigin().ifPresent(origin -> origin.handleAbilities(context));
 	}
 
 	public Player getPlayer() {

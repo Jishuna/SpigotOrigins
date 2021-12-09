@@ -7,6 +7,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import me.jishuna.actionconfiglib.ActionConfigLib;
 import me.jishuna.commonlib.inventory.CustomInventoryManager;
 import me.jishuna.commonlib.language.MessageConfig;
 import me.jishuna.commonlib.utils.FileUtils;
@@ -25,16 +26,19 @@ public class SpigotOrigins extends JavaPlugin {
 	private OriginPlayerManager playerManager;
 	private AbilityRegistry abilityRegistry;
 	private MessageConfig messageConfig;
+	private ActionConfigLib actionLib;
 
 	private CustomInventoryManager inventoryManager;
 
 	@Override
 	public void onEnable() {
 		loadConfiguration();
+		
+		this.actionLib = ActionConfigLib.createInstance(this);
 
 		new EventManager(this);
 
-		this.abilityRegistry = new AbilityRegistry();
+		this.abilityRegistry = new AbilityRegistry(this);
 		this.originRegistry = new OriginRegistry();
 		this.playerManager = new OriginPlayerManager(this);
 
@@ -105,6 +109,10 @@ public class SpigotOrigins extends JavaPlugin {
 
 	public CustomInventoryManager getInventoryManager() {
 		return inventoryManager;
+	}
+
+	public ActionConfigLib getActionLib() {
+		return actionLib;
 	}
 
 	public MessageConfig getMessageConfig() {

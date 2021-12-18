@@ -14,7 +14,6 @@ import me.jishuna.actionconfiglib.ActionContext;
 import me.jishuna.commonlib.items.ItemBuilder;
 import me.jishuna.commonlib.language.MessageConfig;
 import me.jishuna.spigotorigins.SpigotOrigins;
-import me.jishuna.spigotorigins.api.ability.SetupAbility;
 import net.md_5.bungee.api.ChatColor;
 
 public class Origin {
@@ -66,20 +65,6 @@ public class Origin {
 				.withName(this.displayName).addLore(config.getString("impact") + getImpactColor()
 						+ icon.repeat(this.impact) + ChatColor.GRAY + icon.repeat(5 - this.impact))
 				.addLore("").addLore(this.description).build();
-	}
-
-	public void setupAbilities(OriginPlayer player) {
-		this.abilities.forEach(ability -> {
-			if (ability instanceof SetupAbility setup)
-				setup.onSetup(player);
-		});
-	}
-
-	public void cleanupAbilities(OriginPlayer player) {
-		this.abilities.forEach(ability -> {
-			if (ability instanceof SetupAbility setup)
-				setup.onCleanup(player);
-		});
 	}
 
 	public SpigotOrigins getPlugin() {

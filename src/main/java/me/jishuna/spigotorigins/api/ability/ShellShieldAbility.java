@@ -4,65 +4,44 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import me.jishuna.spigotorigins.api.OriginPlayer;
-import me.jishuna.spigotorigins.api.RegisterAbility;;
+import me.jishuna.actionconfiglib.ActionContext;
+import me.jishuna.actionconfiglib.ConfigurationEntry;
+import me.jishuna.actionconfiglib.effects.Effect;
+import me.jishuna.actionconfiglib.enums.EntityTarget;
+import me.jishuna.actionconfiglib.exceptions.ParsingException;
+import me.jishuna.spigotorigins.SpigotOrigins;;
 
-@RegisterAbility(name = "shell_shield")
-public class ShellShieldAbility extends Ability implements SetupAbility {
+public class ShellShieldAbility extends Effect {
 	private final Map<UUID, Float> shielding = new HashMap<>();
+	private final EntityTarget target;
 
-	public ShellShieldAbility(String[] data) {
-		addEventHandler(PlayerSwapHandItemsEvent.class, this::onAbilityToggle);
-		addEventHandler(PlayerDeathEvent.class, this::onPlayerDeath);
-		addEventHandler(PlayerMoveEvent.class, this::onMove);
+	public ShellShieldAbility(ConfigurationEntry entry) throws ParsingException {
+		this.target = EntityTarget.fromString(entry.getString("target"));
 	}
 
-	private void onMove(PlayerMoveEvent event, OriginPlayer originPlayer) {
-		if (!shielding.containsKey(event.getPlayer().getUniqueId()))
+	@Override
+	public void evaluate(ActionContext context) {
+		LivingEntity entity = context.getLivingTarget(this.target);
+
+		if (!(entity instanceof Player player))
 			return;
 
-		Location to = event.getTo();
-		Location from = event.getFrom();
-
-		to.setX(from.getX());
-		to.setZ(from.getZ());
-	}
-
-	private void onPlayerDeath(PlayerDeathEvent event, OriginPlayer originPlayer) {
-		this.shielding.remove(event.getEntity().getUniqueId());
-	}
-
-	private void onAbilityToggle(PlayerSwapHandItemsEvent event, OriginPlayer originPlayer) {
-		Player player = event.getPlayer();
-
-		if (!player.isSneaking())
-			return;
-
-		event.setCancelled(true);
-
-		if (shielding.containsKey(player.getUniqueId())) {
-			disableShield(player);
+		if (context.getTrigger() == SpigotOrigins.ORIGIN_REMOVED) {
+			if (shielding.containsKey(player.getUniqueId()))
+				disableShield(player);
 		} else {
-			enableShield(player);
+			if (shielding.containsKey(player.getUniqueId())) {
+				disableShield(player);
+			} else {
+				enableShield(player);
+			}
 		}
-	}
-
-	@Override
-	public void onSetup(OriginPlayer originPlayer) {
-	}
-
-	@Override
-	public void onCleanup(OriginPlayer originPlayer) {
-		this.shielding.remove(originPlayer.getPlayer().getUniqueId());
 	}
 
 	private void enableShield(Player player) {

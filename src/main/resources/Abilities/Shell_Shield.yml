@@ -1,0 +1,15 @@
+name: 'shell_shield'
+
+components:
+  - triggers: HAND_ITEM_SWAPPED
+    conditions:
+      - type: IS_SNEAKING
+        target: user
+        value: true
+    effects:
+      - type: SHELL_SHIELD
+        target: user
+  - triggers: ORIGIN_REMOVED
+    effects:
+      - type: SHELL_SHIELD
+        target: user

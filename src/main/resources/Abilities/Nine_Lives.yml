@@ -1,0 +1,19 @@
+name: 'nine_lives'
+
+components:
+  - triggers: ORIGIN_ADDED
+    effects:
+      - type: ADD_ATTRIBUTE
+        target: user
+        name: 'so:nine_lives'
+        attribute: generic_max_health
+        opperation: add_number
+        value: -2
+        scale-health: true
+  - triggers: ORIGIN_REMOVED
+    effects:
+      - type: REMOVE_ATTRIBUTE
+        target: user
+        name: 'so:nine_lives'
+        attribute: generic_max_health
+        scale-health: true

@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 
 import me.jishuna.actionconfiglib.ActionContext;
+import me.jishuna.spigotorigins.SpigotOrigins;
 
 public class OriginPlayer {
 
@@ -17,7 +18,7 @@ public class OriginPlayer {
 		this.origin = registry.getOrigin(player.getPersistentDataContainer().getOrDefault(PluginKeys.ORIGIN.getKey(),
 				PersistentDataType.STRING, ""));
 
-		this.getOrigin().ifPresent(origin -> origin.setupAbilities(this));
+		this.setupOrigin();
 	}
 
 	public void handleContext(ActionContext context) {
@@ -32,14 +33,24 @@ public class OriginPlayer {
 		return Optional.ofNullable(this.origin);
 	}
 
-	public void setOrigin(Origin origin) {
+	public void setupOrigin() {
 		if (this.origin != null)
-			this.origin.cleanupAbilities(this);
+			this.origin
+					.handleAbilities(new ActionContext.Builder(SpigotOrigins.ORIGIN_ADDED).user(getPlayer()).build());
+	}
+
+	public void cleanupOrigin() {
+		if (this.origin != null)
+			this.origin
+					.handleAbilities(new ActionContext.Builder(SpigotOrigins.ORIGIN_REMOVED).user(getPlayer()).build());
+	}
+
+	public void setOrigin(Origin origin) {
+		cleanupOrigin();
 
 		this.origin = origin;
 
-		if (this.origin != null)
-			this.origin.setupAbilities(this);
+		setupOrigin();
 
 //		this.getPlayer().getPersistentDataContainer().set(PluginKeys.ORIGIN.getKey(), PersistentDataType.STRING,
 //				origin.getName());

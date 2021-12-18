@@ -8,6 +8,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.jishuna.actionconfiglib.ActionConfigLib;
+import me.jishuna.actionconfiglib.triggers.Trigger;
 import me.jishuna.commonlib.inventory.CustomInventoryManager;
 import me.jishuna.commonlib.language.MessageConfig;
 import me.jishuna.commonlib.utils.FileUtils;
@@ -17,9 +18,13 @@ import me.jishuna.spigotorigins.api.Origin;
 import me.jishuna.spigotorigins.api.OriginPlayerManager;
 import me.jishuna.spigotorigins.api.OriginRegistry;
 import me.jishuna.spigotorigins.api.ability.AbilityRegistry;
+import me.jishuna.spigotorigins.api.ability.ShellShieldAbility;
 import me.jishuna.spigotorigins.nms.NMSManager;
 
 public class SpigotOrigins extends JavaPlugin {
+	public static final Trigger ORIGIN_ADDED = new Trigger("ORIGIN_ADDED");
+	public static final Trigger ORIGIN_REMOVED = new Trigger("ORIGIN_REMOVED");
+	
 	private static final String PATH = "Origins";
 
 	private OriginRegistry originRegistry;
@@ -35,6 +40,10 @@ public class SpigotOrigins extends JavaPlugin {
 		loadConfiguration();
 		
 		this.actionLib = ActionConfigLib.createInstance(this);
+		this.actionLib.getTriggerRegistry().registerTrigger(ORIGIN_ADDED);
+		this.actionLib.getTriggerRegistry().registerTrigger(ORIGIN_REMOVED);
+		
+		this.actionLib.registerEffect("SHELL_SHIELD", ShellShieldAbility.class);
 
 		new EventManager(this);
 

@@ -8,6 +8,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 
 import me.jishuna.actionconfiglib.ActionContext;
 import me.jishuna.actionconfiglib.triggers.TriggerRegistry;
@@ -25,6 +27,8 @@ public class EventManager {
 	public void registerListeners() {
 		registerListener(BlockBreakEvent.class, this::onBlockBreak);
 		registerListener(EntityDamageEvent.class, this::onDamage);
+		registerListener(EntityTargetLivingEntityEvent.class, this::onTarget);
+		registerListener(PlayerSwapHandItemsEvent.class, this::onHandSwap);
 	}
 
 	private void onDamage(EntityDamageEvent event) {
@@ -52,6 +56,31 @@ public class EventManager {
 
 		ActionContext context = new ActionContext.Builder(TriggerRegistry.BREAK_BLOCK).event(event).user(player)
 				.targetLocation(event.getBlock().getLocation()).build();
+		originPlayer.handleContext(context);
+	}
+
+	private void onTarget(EntityTargetLivingEntityEvent event) {
+		if (!(event.getTarget()instanceof Player player))
+			return;
+
+		OriginPlayer originPlayer = plugin.getPlayerRegistry().getOriginPlayer(player);
+		if (originPlayer == null)
+			return;
+
+		ActionContext context = new ActionContext.Builder(TriggerRegistry.ENTITY_TARGET).event(event).user(player)
+				.opponent(event.getEntity()).build();
+		originPlayer.handleContext(context);
+	}
+
+	private void onHandSwap(PlayerSwapHandItemsEvent event) {
+		Player player = event.getPlayer();
+
+		OriginPlayer originPlayer = plugin.getPlayerRegistry().getOriginPlayer(player);
+		if (originPlayer == null)
+			return;
+
+		ActionContext context = new ActionContext.Builder(TriggerRegistry.HAND_ITEM_SWAPPED).event(event).user(player)
+				.build();
 		originPlayer.handleContext(context);
 	}
 

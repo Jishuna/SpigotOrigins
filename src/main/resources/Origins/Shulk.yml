@@ -31,8 +31,5 @@ description:
   - '&7than most.'
 
 abilities:
-  - shell_shield()
-  - attribute(generic_armor,4)
-  - neutral(shulker)
-  - disable_shield()
-  - attribute_percent(generic_movement_speed,-0.1)
+  - shell_shield
+  - unwieldy

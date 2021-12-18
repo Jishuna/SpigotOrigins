@@ -1,0 +1,15 @@
+name: 'unwieldy'
+
+components:
+  - triggers: ORIGIN_ADDED
+    effects:
+      - type: ITEM_COOLDOWN
+        target: user
+        item-type: shield
+        ticks: 1000000000
+  - triggers: ORIGIN_REMOVED
+    effects:
+      - type: ITEM_COOLDOWN
+        target: user
+        item-type: shield
+        ticks: 0

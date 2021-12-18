@@ -50,7 +50,7 @@ public class OriginPlayerManager implements Listener {
 		OriginPlayer originPlayer = getOriginPlayer(player);
 
 		if (originPlayer != null) {
-			originPlayer.getOrigin().ifPresent(origin -> origin.cleanupAbilities(originPlayer));
+			originPlayer.cleanupOrigin();
 		}
 
 		this.playerMap.remove(player.getUniqueId());

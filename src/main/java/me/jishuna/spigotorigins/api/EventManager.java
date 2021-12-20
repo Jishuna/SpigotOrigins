@@ -6,8 +6,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.EntityAirChangeEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 
@@ -29,6 +31,8 @@ public class EventManager {
 		registerListener(EntityDamageEvent.class, this::onDamage);
 		registerListener(EntityTargetLivingEntityEvent.class, this::onTarget);
 		registerListener(PlayerSwapHandItemsEvent.class, this::onHandSwap);
+		registerListener(EntityPotionEffectEvent.class, this::onEffectGained);
+		registerListener(EntityAirChangeEvent.class, this::onAirChange);
 	}
 
 	private void onDamage(EntityDamageEvent event) {
@@ -44,6 +48,32 @@ public class EventManager {
 			return;
 
 		ActionContext context = new ActionContext.Builder(TriggerRegistry.DAMAGED_BY_OTHER).event(event).user(player)
+				.build();
+		originPlayer.handleContext(context);
+	}
+
+	private void onEffectGained(EntityPotionEffectEvent event) {
+		if (!(event.getEntity() instanceof Player player) || event.getNewEffect() == null)
+			return;
+
+		OriginPlayer originPlayer = plugin.getPlayerRegistry().getOriginPlayer(player);
+		if (originPlayer == null)
+			return;
+
+		ActionContext context = new ActionContext.Builder(TriggerRegistry.EFFECT_GAINED).event(event).user(player)
+				.build();
+		originPlayer.handleContext(context);
+	}
+	
+	private void onAirChange(EntityAirChangeEvent event) {
+		if (!(event.getEntity() instanceof Player player))
+			return;
+
+		OriginPlayer originPlayer = plugin.getPlayerRegistry().getOriginPlayer(player);
+		if (originPlayer == null)
+			return;
+
+		ActionContext context = new ActionContext.Builder(SpigotOrigins.AIR_LEVEL_CHANGE).event(event).user(player)
 				.build();
 		originPlayer.handleContext(context);
 	}

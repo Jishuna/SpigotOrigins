@@ -14,6 +14,9 @@ description:
   - '&7You are adapted to breather underwater,'
   - '&7but not on land.'
   - ''
+  - '&f&nAquatic Eye'
+  - '&7Your underwater vision is improved.'
+  - ''
   - '&f&nSwift Swim'
   - '&7You move faster than normal underwater.'
   - ''
@@ -25,5 +28,36 @@ description:
   - '&7You are immune to the hunger effect.'
 
 abilities:
-  - swift_swim
-  - aquatic_eye
+  - triggers: TICK
+    conditions:
+      - IN_WATER(user)
+    effects:
+      - ADD_EFFECT(user,dolphins_grace,15,1,true,true)
+      - ADD_EFFECT(user,night_vision,220,1,true,true)
+
+  - triggers: TICK
+    conditions:
+      - AIR(user,%air% >= %max%)
+    effects:
+      - SET_AIR(user,%max% - 1)
+
+  - triggers: AIR_LEVEL_CHANGE
+    effects:
+      - AQUATIC(user)
+
+  - triggers: ORIGIN_REMOVED
+    effects:
+      - REMOVE_EFFECT(user,water_breathing)
+
+  - triggers: ENTITY_TARGET
+    conditions:
+      - TARGET_REASON(closest_player)
+      - ENTITY_TYPE(opponent,drowned)
+    effects:
+      - CANCEL_EVENT()
+
+  - triggers: EFFECT_GAINED
+    conditions:
+      - EFFECT_TYPE(hunger)
+    effects:
+      - CANCEL_EVENT()

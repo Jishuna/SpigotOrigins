@@ -1,16 +1,15 @@
 package me.jishuna.spigotorigins.api;
 
-import java.util.HashSet;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 
-import me.jishuna.actionconfiglib.Action;
 import me.jishuna.actionconfiglib.ActionContext;
+import me.jishuna.actionconfiglib.Component;
 import me.jishuna.commonlib.items.ItemBuilder;
 import me.jishuna.commonlib.language.MessageConfig;
 import me.jishuna.spigotorigins.SpigotOrigins;
@@ -27,7 +26,7 @@ public class Origin {
 
 	private Material material;
 
-	private final Set<Action> abilities = new HashSet<>();
+	private final List<Component> abilities;
 
 	public Origin(SpigotOrigins plugin, ConfigurationSection section) throws InvalidOriginException {
 		this.plugin = plugin;
@@ -40,11 +39,7 @@ public class Origin {
 
 		this.impact = section.getInt("impact", 1);
 
-		for (String abilityString : section.getStringList("abilities")) {
-			Action ability = plugin.getAbilityRegistry().getAbility(abilityString);
-			if (ability != null)
-				this.abilities.add(ability);
-		}
+		this.abilities = Arrays.asList(plugin.getActionLib().parseComponents(section.getMapList("abilities")));
 
 		String materialName = section.getString("display-item", "none");
 		this.material = Material.matchMaterial(materialName);
@@ -83,7 +78,7 @@ public class Origin {
 		return impact;
 	}
 
-	public Set<Action> getAbilities() {
+	public List<Component> getAbilities() {
 		return abilities;
 	}
 

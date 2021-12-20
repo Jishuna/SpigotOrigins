@@ -19,5 +19,15 @@ description:
   - '&7You take damage when in contact with water.'
 
 abilities:
-  - teleportation
-  - hydrophobic
+  - triggers: TICK
+    conditions:
+      - IN_WATER(user)
+    effects:
+      - DAMAGE(user,1)
+
+  - triggers: HAND_ITEM_SWAPPED
+    conditions:
+      - IS_SNEAKING(user)
+      - COOLDOWN(60)
+    effects:
+      - LAUNCH_PROJECTILE(user,ender_pearl)

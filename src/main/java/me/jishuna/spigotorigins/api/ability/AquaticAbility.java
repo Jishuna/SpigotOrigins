@@ -1,65 +1,52 @@
 package me.jishuna.spigotorigins.api.ability;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityAirChangeEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import me.jishuna.spigotorigins.api.InvalidOriginException;
-import me.jishuna.spigotorigins.api.OriginPlayer;
-import me.jishuna.spigotorigins.api.RegisterAbility;
+import me.jishuna.actionconfiglib.ActionContext;
+import me.jishuna.actionconfiglib.ArgumentFormat;
+import me.jishuna.actionconfiglib.ConfigurationEntry;
+import me.jishuna.actionconfiglib.effects.Effect;
+import me.jishuna.actionconfiglib.enums.EntityTarget;
+import me.jishuna.actionconfiglib.exceptions.ParsingException;
 import me.jishuna.spigotorigins.nms.NMSManager;;
 
-@RegisterAbility(name = "aquatic")
-public class AquaticAbility extends Ability implements SetupAbility {
+@ArgumentFormat(format = { "target" })
+public class AquaticAbility extends Effect {
+	private final EntityTarget target;
 
-	public AquaticAbility(String[] data) throws InvalidOriginException {
-		addEventHandler(EntityAirChangeEvent.class, this::onAirChange);
-		addEventHandler(PlayerRespawnEvent.class, this::onRespawn);
+	public AquaticAbility(ConfigurationEntry entry) throws ParsingException {
+		this.target = EntityTarget.fromString(entry.getString("target"));
 	}
 
-	private void onRespawn(PlayerRespawnEvent event, OriginPlayer originPlayer) {
-		Bukkit.getScheduler().runTask(originPlayer.getOrigin().get().getPlugin(),
-				() -> event.getPlayer().setRemainingAir(event.getPlayer().getMaximumAir() - 1));
-	}
+	@Override
+	public void evaluate(ActionContext context) {
+		if (!(context.getEvent()instanceof EntityAirChangeEvent event))
+			return;
 
-	private void onAirChange(EntityAirChangeEvent event, OriginPlayer originPlayer) {
-		Player player = (Player) event.getEntity();
-		int oldAir = player.getRemainingAir();
+		LivingEntity entity = context.getLivingTarget(this.target);
+		int oldAir = entity.getRemainingAir();
 		int newAir = event.getAmount();
 
 		int air = 0;
 		if (oldAir > newAir) {
-			air = Math.min(oldAir + 4, player.getMaximumAir() - 1);
+			air = Math.min(oldAir + 4, entity.getMaximumAir() - 1);
 
-			if (air == player.getMaximumAir() - 1)
-				player.addPotionEffect(
+			if (air == entity.getMaximumAir() - 1)
+				entity.addPotionEffect(
 						new PotionEffect(PotionEffectType.WATER_BREATHING, Integer.MAX_VALUE, 0, true, false));
 		} else {
 			air = Math.max(oldAir - 1, -20);
-			player.removePotionEffect(PotionEffectType.WATER_BREATHING);
+			entity.removePotionEffect(PotionEffectType.WATER_BREATHING);
 		}
 
 		if (air == -20) {
 			air = 0;
-			NMSManager.getAdapter().dealDrowningDamage(player);
+			NMSManager.getAdapter().dealDrowningDamage(entity);
 		}
 
 		event.setAmount(air);
-	}
-
-	@Override
-	public void onSetup(OriginPlayer originPlayer) {
-		Player player = originPlayer.getPlayer();
-
-		if (player.getRemainingAir() >= player.getMaximumAir())
-			player.setRemainingAir(player.getMaximumAir() - 1);
-	}
-
-	@Override
-	public void onCleanup(OriginPlayer originPlayer) {
-		originPlayer.getPlayer().removePotionEffect(PotionEffectType.WATER_BREATHING);
 	}
 }

@@ -31,5 +31,31 @@ description:
   - '&7than most.'
 
 abilities:
-  - shell_shield
-  - unwieldy
+  - triggers: TICK
+    effects:
+      - ITEM_COOLDOWN(user,shield,1200)
+
+  - triggers: ORIGIN_ADDED
+    effects:
+      - 'ADD_ATTRIBUTE(user,so:shell_armor,generic_armor,add_number,4)'
+      - 'ADD_ATTRIBUTE(user,so:no_legs,generic_movement_speed,add_scalar,-0.2)'
+
+  - triggers: HAND_ITEM_SWAPPED
+    conditions:
+      - IS_SNEAKING(user)
+    effects:
+      - SHELL_SHIELD(user)
+
+  - triggers: ORIGIN_REMOVED
+    effects:
+      - SHELL_SHIELD(user)
+      - 'REMOVE_ATTRIBUTE(user,so:shell_armor,generic_armor)'
+      - 'REMOVE_ATTRIBUTE(user,so:no_legs,generic_movement_speed)'
+      - ITEM_COOLDOWN(user,shield,0)
+
+  - triggers: ENTITY_TARGET
+    conditions:
+      - TARGET_REASON(closest_player)
+      - ENTITY_TYPE(opponent,shulker)
+    effects:
+      - CANCEL_EVENT()

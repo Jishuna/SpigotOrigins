@@ -17,19 +17,19 @@ import me.jishuna.spigotorigins.api.InvalidOriginException;
 import me.jishuna.spigotorigins.api.Origin;
 import me.jishuna.spigotorigins.api.OriginPlayerManager;
 import me.jishuna.spigotorigins.api.OriginRegistry;
-import me.jishuna.spigotorigins.api.ability.AbilityRegistry;
+import me.jishuna.spigotorigins.api.ability.AquaticAbility;
 import me.jishuna.spigotorigins.api.ability.ShellShieldAbility;
 import me.jishuna.spigotorigins.nms.NMSManager;
 
 public class SpigotOrigins extends JavaPlugin {
 	public static final Trigger ORIGIN_ADDED = new Trigger("ORIGIN_ADDED");
 	public static final Trigger ORIGIN_REMOVED = new Trigger("ORIGIN_REMOVED");
+	public static final Trigger AIR_LEVEL_CHANGE = new Trigger("AIR_LEVEL_CHANGE");
 	
 	private static final String PATH = "Origins";
 
 	private OriginRegistry originRegistry;
 	private OriginPlayerManager playerManager;
-	private AbilityRegistry abilityRegistry;
 	private MessageConfig messageConfig;
 	private ActionConfigLib actionLib;
 
@@ -42,12 +42,13 @@ public class SpigotOrigins extends JavaPlugin {
 		this.actionLib = ActionConfigLib.createInstance(this);
 		this.actionLib.getTriggerRegistry().registerTrigger(ORIGIN_ADDED);
 		this.actionLib.getTriggerRegistry().registerTrigger(ORIGIN_REMOVED);
+		this.actionLib.getTriggerRegistry().registerTrigger(AIR_LEVEL_CHANGE);
 		
 		this.actionLib.registerEffect("SHELL_SHIELD", ShellShieldAbility.class);
+		this.actionLib.registerEffect("AQUATIC", AquaticAbility.class);
 
 		new EventManager(this);
 
-		this.abilityRegistry = new AbilityRegistry(this);
 		this.originRegistry = new OriginRegistry();
 		this.playerManager = new OriginPlayerManager(this);
 
@@ -102,10 +103,6 @@ public class SpigotOrigins extends JavaPlugin {
 
 		FileUtils.loadResourceFile(this, "messages.yml")
 				.ifPresent(file -> this.messageConfig = new MessageConfig(file));
-	}
-
-	public AbilityRegistry getAbilityRegistry() {
-		return abilityRegistry;
 	}
 
 	public OriginRegistry getOriginRegistry() {

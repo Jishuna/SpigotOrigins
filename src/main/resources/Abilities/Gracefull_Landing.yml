@@ -1,9 +1,0 @@
-name: 'gracefull_landing'
-
-components:
-  - triggers: DAMAGED_BY_OTHER
-    conditions:
-      - type: DAMAGE_CAUSE
-        causes: fall
-    effects:
-      - type: CANCEL_EVENT

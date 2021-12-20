@@ -26,7 +26,28 @@ description:
   - '&7most.'
 
 abilities:
-  - cat-like_reflexes
-  - gracefull_landing
-  - feline_fear
-  - nine_lives
+  # Graceful Landing
+  - triggers: DAMAGED_BY_OTHER
+    conditions:
+      - DAMAGE_CAUSE(fall)
+    effects:
+      - CANCEL_EVENT()
+
+  # Cat-like Reflexes and Nine Lives
+  - triggers: ORIGIN_ADDED
+    effects:
+      - 'ADD_ATTRIBUTE(user,so:nine_lives,generic_max_health,add_number,-2,true)'
+      - 'ADD_ATTRIBUTE(user,so:cat-like_reflexes,generic_movement_speed,add_scalar,0.2)'
+
+  - triggers: ORIGIN_REMOVED
+    effects:
+      - 'REMOVE_ATTRIBUTE(user,so:nine_lives,generic_max_health,true)'
+      - 'REMOVE_ATTRIBUTE(user,so:cat-like_reflexes,generic_movement_speed)'
+
+  # Feline Fear
+  - triggers: ENTITY_TARGET
+    conditions:
+      - TARGET_REASON(closest_player)
+      - ENTITY_TYPE(opponent,creeper)
+    effects:
+      - CANCEL_EVENT()

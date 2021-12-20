@@ -1,9 +1,0 @@
-name: 'feline_fear'
-
-components:
-  - triggers: ENTITY_TARGET
-    conditions:
-      - type: TARGET_REASON
-        reasons: closest_player
-    effects:
-      - type: CANCEL_EVENT

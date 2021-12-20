@@ -22,6 +22,3 @@ description:
   - '&7Villagers refuse to trade with you.'
 
 abilities:
-  - fang_wave()
-  - neutral(pillager,evoker,vindicator,ravager)
-  - no_trading()

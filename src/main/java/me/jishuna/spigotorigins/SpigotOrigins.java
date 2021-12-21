@@ -18,6 +18,8 @@ import me.jishuna.spigotorigins.api.Origin;
 import me.jishuna.spigotorigins.api.OriginPlayerManager;
 import me.jishuna.spigotorigins.api.OriginRegistry;
 import me.jishuna.spigotorigins.api.ability.AquaticAbility;
+import me.jishuna.spigotorigins.api.ability.FangWaveAbility;
+import me.jishuna.spigotorigins.api.ability.NoPearlDamageAbility;
 import me.jishuna.spigotorigins.api.ability.ShellShieldAbility;
 import me.jishuna.spigotorigins.nms.NMSManager;
 
@@ -25,7 +27,8 @@ public class SpigotOrigins extends JavaPlugin {
 	public static final Trigger ORIGIN_ADDED = new Trigger("ORIGIN_ADDED");
 	public static final Trigger ORIGIN_REMOVED = new Trigger("ORIGIN_REMOVED");
 	public static final Trigger AIR_LEVEL_CHANGE = new Trigger("AIR_LEVEL_CHANGE");
-	
+	public static final Trigger PLAYER_TELEPORT = new Trigger("PLAYER_TELEPORT");
+
 	private static final String PATH = "Origins";
 
 	private OriginRegistry originRegistry;
@@ -38,14 +41,8 @@ public class SpigotOrigins extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		loadConfiguration();
-		
-		this.actionLib = ActionConfigLib.createInstance(this);
-		this.actionLib.getTriggerRegistry().registerTrigger(ORIGIN_ADDED);
-		this.actionLib.getTriggerRegistry().registerTrigger(ORIGIN_REMOVED);
-		this.actionLib.getTriggerRegistry().registerTrigger(AIR_LEVEL_CHANGE);
-		
-		this.actionLib.registerEffect("SHELL_SHIELD", ShellShieldAbility.class);
-		this.actionLib.registerEffect("AQUATIC", AquaticAbility.class);
+
+		this.setupActionLib();
 
 		new EventManager(this);
 
@@ -53,13 +50,13 @@ public class SpigotOrigins extends JavaPlugin {
 		this.playerManager = new OriginPlayerManager(this);
 
 		this.inventoryManager = new CustomInventoryManager();
-		
+
 		NMSManager.initAdapater(this);
 
 		PluginManager pm = Bukkit.getPluginManager();
 		pm.registerEvents(this.playerManager, this);
 		pm.registerEvents(this.inventoryManager, this);
-		
+
 		new TickingAbilityRunnable(this.playerManager).runTaskTimer(this, 0, 10);
 
 		loadOrigins();
@@ -95,6 +92,20 @@ public class SpigotOrigins extends JavaPlugin {
 				ex.log(getLogger());
 			}
 		}
+	}
+
+	private void setupActionLib() {
+		this.actionLib = ActionConfigLib.createInstance(this);
+		
+		this.actionLib.getTriggerRegistry().registerTrigger(ORIGIN_ADDED);
+		this.actionLib.getTriggerRegistry().registerTrigger(ORIGIN_REMOVED);
+		this.actionLib.getTriggerRegistry().registerTrigger(AIR_LEVEL_CHANGE);
+		this.actionLib.getTriggerRegistry().registerTrigger(PLAYER_TELEPORT);
+
+		this.actionLib.registerEffect("SHELL_SHIELD", ShellShieldAbility.class);
+		this.actionLib.registerEffect("AQUATIC", AquaticAbility.class);
+		this.actionLib.registerEffect("NO_PEARL_DAMAGE", NoPearlDamageAbility.class);
+		this.actionLib.registerEffect("FANG_WAVE", FangWaveAbility.class);
 	}
 
 	public void loadConfiguration() {

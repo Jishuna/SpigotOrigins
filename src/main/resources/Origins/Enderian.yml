@@ -25,6 +25,10 @@ abilities:
     effects:
       - DAMAGE(user,1)
 
+  - triggers: PLAYER_TELEPORT
+    effects:
+      - NO_PEARL_DAMAGE(user)
+
   - triggers: HAND_ITEM_SWAPPED
     conditions:
       - IS_SNEAKING(user)

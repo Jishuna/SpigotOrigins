@@ -11,7 +11,9 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 import me.jishuna.actionconfiglib.ActionContext;
 import me.jishuna.actionconfiglib.triggers.TriggerRegistry;
@@ -33,6 +35,8 @@ public class EventManager {
 		registerListener(PlayerSwapHandItemsEvent.class, this::onHandSwap);
 		registerListener(EntityPotionEffectEvent.class, this::onEffectGained);
 		registerListener(EntityAirChangeEvent.class, this::onAirChange);
+		registerListener(PlayerTeleportEvent.class, this::onTeleport);
+		registerListener(PlayerInteractEntityEvent.class, this::onInteractEntity);
 	}
 
 	private void onDamage(EntityDamageEvent event) {
@@ -53,7 +57,7 @@ public class EventManager {
 	}
 
 	private void onEffectGained(EntityPotionEffectEvent event) {
-		if (!(event.getEntity() instanceof Player player) || event.getNewEffect() == null)
+		if (!(event.getEntity()instanceof Player player) || event.getNewEffect() == null)
 			return;
 
 		OriginPlayer originPlayer = plugin.getPlayerRegistry().getOriginPlayer(player);
@@ -64,9 +68,9 @@ public class EventManager {
 				.build();
 		originPlayer.handleContext(context);
 	}
-	
+
 	private void onAirChange(EntityAirChangeEvent event) {
-		if (!(event.getEntity() instanceof Player player))
+		if (!(event.getEntity()instanceof Player player))
 			return;
 
 		OriginPlayer originPlayer = plugin.getPlayerRegistry().getOriginPlayer(player);
@@ -75,6 +79,28 @@ public class EventManager {
 
 		ActionContext context = new ActionContext.Builder(SpigotOrigins.AIR_LEVEL_CHANGE).event(event).user(player)
 				.build();
+		originPlayer.handleContext(context);
+	}
+
+	private void onTeleport(PlayerTeleportEvent event) {
+		Player player = event.getPlayer();
+		OriginPlayer originPlayer = plugin.getPlayerRegistry().getOriginPlayer(player);
+		if (originPlayer == null)
+			return;
+
+		ActionContext context = new ActionContext.Builder(SpigotOrigins.PLAYER_TELEPORT).event(event).user(player)
+				.targetLocation(event.getTo()).build();
+		originPlayer.handleContext(context);
+	}
+
+	private void onInteractEntity(PlayerInteractEntityEvent event) {
+		Player player = event.getPlayer();
+		OriginPlayer originPlayer = plugin.getPlayerRegistry().getOriginPlayer(player);
+		if (originPlayer == null)
+			return;
+
+		ActionContext context = new ActionContext.Builder(TriggerRegistry.ENTITY_INTERACT).event(event).user(player)
+				.opponent(event.getRightClicked()).build();
 		originPlayer.handleContext(context);
 	}
 

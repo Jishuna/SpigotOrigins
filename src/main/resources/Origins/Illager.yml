@@ -22,3 +22,22 @@ description:
   - '&7Villagers refuse to trade with you.'
 
 abilities:
+  - triggers: HAND_ITEM_SWAPPED
+    conditions:
+      - IS_SNEAKING(user)
+      - COOLDOWN(60)
+    effects:
+      - FANG_WAVE(user)
+
+  - triggers: ENTITY_TARGET
+    conditions:
+      - TARGET_REASON(closest_player)
+      - ENTITY_TYPE(opponent,pillager,vindicator,evoker,ravager,illusioner)
+    effects:
+      - CANCEL_EVENT()
+
+  - triggers: ENTITY_INTERACT
+    conditions:
+      - ENTITY_TYPE(opponent,villager)
+    effects:
+      - CANCEL_EVENT()

@@ -40,4 +40,5 @@ abilities:
     conditions:
       - ENTITY_TYPE(opponent,villager)
     effects:
+      - ENTITY_EFFECT(opponent,villager_angry)
       - CANCEL_EVENT()
